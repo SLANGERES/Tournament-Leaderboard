@@ -6,23 +6,31 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/SLANGERES/Tournament-Lederboard/config"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/handler"
+	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/repository"
 )
 
 func main() {
+
+	cnf := config.SetConfig()
 	router := http.NewServeMux()
 
+	_, err := repository.ConfigAdminDB(cnf.AdminDB)
+	if err != nil {
+		slog.Info("Unable to make db connection " + err.Error())
+	}
 	//! Routers Endpoints
 	router.HandleFunc("POST /sign-up", handler.Signup())
 	router.HandleFunc("POST /log-in", handler.Login())
 
-	err := http.ListenAndServe(
-		"0.0.0.0:7070",
+	err = http.ListenAndServe(
+		cnf.HttpServer.AdminAddress,
 		router,
 	)
 	if err != nil {
 		slog.Info("Server start fail !")
 	}
-	slog.Info("Admin Server started at 0.0.0.0:7070")
+	slog.Info("Admin Server started at" + cnf.HttpServer.AdminAddress)
 
 }

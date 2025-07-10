@@ -4,10 +4,14 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/SLANGERES/Tournament-Lederboard/config"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/user/handler"
 )
 
 func main() {
+
+	cnf := config.SetConfig()
+
 	router := http.NewServeMux()
 
 	//! Routers Endpoints
@@ -15,12 +19,12 @@ func main() {
 	router.HandleFunc("POST /v1/user/log-in", handler.LogInUser())
 
 	err := http.ListenAndServe(
-		"0.0.0.0:7072",
+		cnf.HttpServer.UserAddress,
 		router,
 	)
 	if err != nil {
 		slog.Info("User Server start fail !")
 	}
-	slog.Info("Server started at 0.0.0.0:7072")
+	slog.Info("Server started at " + cnf.HttpServer.UserAddress)
 
 }

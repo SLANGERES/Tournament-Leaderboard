@@ -1,16 +1,17 @@
 package main
 
-
 //Tournament API Backend
 
 import (
 	"log/slog"
 	"net/http"
 
+	"github.com/SLANGERES/Tournament-Lederboard/config"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/tournament/handler"
 )
 
 func main() {
+	cnf := config.SetConfig()
 	router := http.NewServeMux()
 
 	//! Routers Endpoints
@@ -18,12 +19,12 @@ func main() {
 	router.HandleFunc("POST /v1/tournament/", handler.OngoingTournament())
 
 	err := http.ListenAndServe(
-		"0.0.0.0:7071",
+		cnf.HttpServer.TournamentAddress,
 		router,
 	)
 	if err != nil {
 		slog.Info("Server start fail !")
 	}
-	slog.Info("Server started at 0.0.0.0:7071")
+	slog.Info("Server started at" + cnf.HttpServer.TournamentAddress)
 
 }
