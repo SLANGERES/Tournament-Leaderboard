@@ -32,3 +32,6 @@ func ConfigAdminDB(path string) (*DbConnection, error) {
 func (sqlDB *DbConnection) CreateAdmin(id int, email string, username string, password string) (int64, error) {
 	return 0, nil
 }
+func (sqlDb *DbConnection) MakeUser()int64{
+	return 0
+}

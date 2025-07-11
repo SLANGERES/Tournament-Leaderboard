@@ -1,14 +1,18 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/repository"
+)
 
 func Signup() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		
 	}
 }
 
-func Login() http.HandlerFunc {
+func Login(Storage *repository.DbConnection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 	}
