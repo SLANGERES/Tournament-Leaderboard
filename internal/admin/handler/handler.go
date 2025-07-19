@@ -54,7 +54,7 @@ func Login(Storage *repository.DbConnection) http.HandlerFunc {
 
 		err = Storage.LoginAdmin(adminLogin.UserName, adminLogin.Password)
 		if err != nil {
-			util.HttpError(w, http.StatusInternalServerError, err)
+			util.HttpError(w, http.StatusInternalServerError,err)
 			return
 		}
 		util.HttpResponse(w, http.StatusOK, "Login sucessfull")

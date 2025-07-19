@@ -4,13 +4,15 @@ env: "Dev"
 
 admin_db: "./storage/Admin.db"
 
-user_db: "./storage/user.db"
+user_db: "./storage/User.db"
 
 jwt_secrate_key: "Vypaa####@99887766"
 
 http_server:
   admin_address: "0.0.0.0:7070"
   user_address: "0.0.0.0:7071"
-  tournament_addres: "0.0.0.0:7072"
+  tournament_address: "0.0.0.0:7072"
+
+
 
 

@@ -5,6 +5,7 @@ package main
 import (
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/SLANGERES/Tournament-Lederboard/config"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/handler"
@@ -13,7 +14,11 @@ import (
 
 func main() {
 
-	cnf := config.SetConfig()
+	cnf, err := config.SetConfig()
+	if err != nil {
+		slog.Warn("unable to get config file")
+		os.Exit(1)
+	}
 	router := http.NewServeMux()
 
 	db, err := repository.ConfigAdminDB(cnf.AdminDB)
@@ -24,6 +29,7 @@ func main() {
 	router.HandleFunc("POST /sign-up", handler.Signup(db))
 	router.HandleFunc("POST /log-in", handler.Login(db))
 
+	slog.Info("Admin Server started at" + cnf.HttpServer.AdminAddress)
 	err = http.ListenAndServe(
 		cnf.HttpServer.AdminAddress,
 		router,
@@ -31,6 +37,5 @@ func main() {
 	if err != nil {
 		slog.Info("Server start fail !")
 	}
-	slog.Info("Admin Server started at" + cnf.HttpServer.AdminAddress)
 
 }

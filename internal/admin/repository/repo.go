@@ -17,12 +17,14 @@ func ConfigAdminDB(path string) (*DbConnection, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = db.Exec(`		CREATE TABLE IF NOT EXISTS admin (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			email UNIQUE TEXT, 
-			username UNIQUE TEXT,
-			password string
-		)`)
+	_, err = db.Exec(`
+	CREATE TABLE IF NOT EXISTS admin (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		email TEXT UNIQUE,
+		username TEXT UNIQUE,
+		password TEXT
+	)
+`)
 
 	if err != nil {
 		return nil, err
