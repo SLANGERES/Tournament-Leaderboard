@@ -16,13 +16,13 @@ func main() {
 	cnf := config.SetConfig()
 	router := http.NewServeMux()
 
-	_, err := repository.ConfigAdminDB(cnf.AdminDB)
+	db, err := repository.ConfigAdminDB(cnf.AdminDB)
 	if err != nil {
-		slog.Info("Unable to make db connection " + err.Error())
+		slog.Info("Unable to connect to the Admin DB" + err.Error())
 	}
 	//! Routers Endpoints
-	router.HandleFunc("POST /sign-up", handler.Signup())
-	router.HandleFunc("POST /log-in", handler.Login())
+	router.HandleFunc("POST /sign-up", handler.Signup(db))
+	router.HandleFunc("POST /log-in", handler.Login(db))
 
 	err = http.ListenAndServe(
 		cnf.HttpServer.AdminAddress,
