@@ -6,6 +6,8 @@ admin_db: "./storage/Admin.db"
 
 user_db: "./storage/User.db"
 
+tournament_db: "./storage/Tournament.db"
+
 jwt_secrate_key: "Vypaa####@99887766"
 
 http_server:
