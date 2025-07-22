@@ -56,26 +56,27 @@ func (userStore *UserStorage) CreateUser(username string, email string, password
 	return result.LastInsertId()
 }
 
-func (userStore *UserStorage) LoginUser(username string, password string) (bool, error) {
-	stmt, err := userStore.Db.Prepare(`SELECT password FROM users WHERE username=?`)
+func (userStore *UserStorage) LoginUser(username string, password string) (int64, error) {
+	stmt, err := userStore.Db.Prepare(`SELECT id,password FROM users WHERE username=?`)
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 	defer stmt.Close()
 
 	var dbPassword string
-	err = stmt.QueryRow(username).Scan(&dbPassword)
+	var id int64
+	err = stmt.QueryRow(username).Scan(&id, &dbPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return false, fmt.Errorf("user not found")
+			return 0, fmt.Errorf("user not found")
 		}
-		return false, err
+		return 0, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(password))
 	if err != nil {
-		return false, fmt.Errorf("invalid password")
+		return 0, fmt.Errorf("invalid password")
 	}
 
-	return true, nil
+	return id, nil
 }

@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
+	"time"
 
+	"github.com/SLANGERES/Tournament-Lederboard/internal/common/jwt"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/common/util"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/user/models"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/user/repository"
@@ -37,7 +40,7 @@ func SignInUser(db *repository.UserStorage) http.HandlerFunc {
 	}
 }
 
-func LogInUser(db *repository.UserStorage) http.HandlerFunc {
+func LogInUser(db *repository.UserStorage, jwt *jwt.JwtMaker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userLoginData models.LoginUser
 
@@ -51,13 +54,25 @@ func LogInUser(db *repository.UserStorage) http.HandlerFunc {
 			return
 		}
 
-		success, err := db.LoginUser(userLoginData.UserName, userLoginData.Password)
-		if err != nil || !success {
+		id, err := db.LoginUser(userLoginData.UserName, userLoginData.Password)
+		if err != nil {
 			util.HttpError(w, http.StatusUnauthorized, fmt.Errorf("invalid username or password"))
 			return
 		}
+		strId := strconv.FormatInt(id, 10)
 
-		// TODO: Replace with actual JWT generation
+		//JWT
+		token, err := jwt.GenerateToken(strId, userLoginData.UserName, "user")
+		if err != nil {
+			util.HttpError(w, http.StatusInternalServerError, fmt.Errorf("unable to generate"))
+			return
+		}
+		http.SetCookie(w, &http.Cookie{
+			Name:   "user-access-token",
+			Value:  token,
+			MaxAge: int((30 * time.Minute).Seconds()),
+		})
+
 		util.HttpResponse(w, http.StatusOK, "Login successful")
 	}
 }

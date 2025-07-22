@@ -10,6 +10,7 @@ import (
 	"github.com/SLANGERES/Tournament-Lederboard/config"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/handler"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/repository"
+	"github.com/SLANGERES/Tournament-Lederboard/internal/common/jwt"
 )
 
 func main() {
@@ -25,9 +26,12 @@ func main() {
 	if err != nil {
 		slog.Info("Unable to connect to the Admin DB" + err.Error())
 	}
+
+	jwtMaker := jwt.NewJwtMaker(cnf.JwtKey)
+
 	//! Routers Endpoints
-	router.HandleFunc("POST /sign-up", handler.Signup(db))
-	router.HandleFunc("POST /log-in", handler.Login(db))
+	router.HandleFunc("POST /v1/admin/signup", handler.Signup(db))
+	router.HandleFunc("POST /v1/admin/login", handler.Login(db, jwtMaker))
 
 	slog.Info("Admin Server started at" + cnf.HttpServer.AdminAddress)
 	err = http.ListenAndServe(

@@ -58,26 +58,27 @@ func (sqlDB *DbConnection) CreateAdmin(email, username, password string) (int64,
 	return rowsAffected, nil
 }
 
-func (sqlDB *DbConnection) LoginAdmin(username, password string) error {
-	stmt, err := sqlDB.Db.Prepare(`SELECT password FROM admin WHERE username = ?`)
+func (sqlDB *DbConnection) LoginAdmin(username, password string) (int64, error) {
+	stmt, err := sqlDB.Db.Prepare(`SELECT id,password FROM admin WHERE username = ?`)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer stmt.Close()
 
 	var dbPassword string
-	err = stmt.QueryRow(username).Scan(&dbPassword)
+	var id int64
+	err = stmt.QueryRow(username).Scan(&id, &dbPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return fmt.Errorf("user not found")
+			return 0, fmt.Errorf("user not found")
 		}
-		return err
+		return 0, err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(dbPassword), []byte(password))
 
 	if err != nil {
-		return fmt.Errorf("invalid password")
+		return 0, fmt.Errorf("invalid password")
 	}
 
-	return nil
+	return id, nil
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/SLANGERES/Tournament-Lederboard/config"
+	"github.com/SLANGERES/Tournament-Lederboard/internal/common/jwt"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/user/handler"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/user/repository"
 )
@@ -15,7 +16,7 @@ func main() {
 	if err != nil {
 		slog.Warn("Unable to get the config file")
 	}
-
+	jwtMaker := jwt.NewJwtMaker(cnf.JwtKey)
 	router := http.NewServeMux()
 
 	db, err := repository.ConfigUserStorage(cnf.UserDB)
@@ -25,8 +26,8 @@ func main() {
 	}
 
 	//! Routers Endpoints
-	router.HandleFunc("POST /v1/user/sign-up", handler.SignInUser(db))
-	router.HandleFunc("POST /v1/user/log-in", handler.LogInUser(db))
+	router.HandleFunc("POST /v1/user/signup", handler.SignInUser(db))
+	router.HandleFunc("POST /v1/user/login", handler.LogInUser(db, jwtMaker))
 
 	slog.Info("Server started at " + cnf.HttpServer.UserAddress)
 	err = http.ListenAndServe(
