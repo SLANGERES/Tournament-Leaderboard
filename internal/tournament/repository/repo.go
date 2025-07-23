@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/SLANGERES/Tournament-Lederboard/internal/tournament/models"
+	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -71,7 +72,19 @@ func ConfigureTournamentStorage(path string) (*TournamentStorage, error) {
 	return &TournamentStorage{Db: db}, nil
 }
 func (tournamentdb *TournamentStorage) CreateTournament(creatorID, name, description string) (string, error) {
-	return "nil", nil
+	tournamentID := uuid.New().String()
+
+	query := `
+		INSERT INTO tournaments (id, creator_id, name, description)
+		VALUES ($1, $2, $3, $4)
+	`
+
+	_, err := tournamentdb.Db.Exec(query, tournamentID, creatorID, name, description)
+	if err != nil {
+		return "", err
+	}
+
+	return tournamentID, nil
 }
 
 // GET ALL TOURNAMENT
@@ -121,9 +134,9 @@ func (tournamentdb *TournamentStorage) GetProblems(tournamentID string) ([]model
 }
 
 func (tournamentdb *TournamentStorage) AddTestCase(problemID string, testCase models.TestCase) (bool, error) {
-	//jwt token 
+	//jwt token
 }
-func (tournamentdb *TournamentStorage) AddParticipant(tournamentID) (bool, error) {
+func (tournamentdb *TournamentStorage) AddParticipant(tournamentID string) (bool, error) {
 	//jwt token
 }
 func (tournamentdb *TournamentStorage) GetAllParticipants(tournamentID string) ([]models.GetTournamentParticipantResponse, error) {
@@ -141,11 +154,10 @@ func (tournamentdb *TournamentStorage) GetAllParticipants(tournamentID string) (
 		}
 		tournametParticipant = append(tournametParticipant, t)
 	}
-	return tournametParticipant,nil
+	return tournametParticipant, nil
 }
 
-tournament_id TEXT NOT NULL,
-		user_id TEXT NOT NULL,
-		user_name TEXT NOT NULL,
-		joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		score INTEGER DEFAULT 0,
+func (tournamentdb *TournamentStorage) GetTournamentById(tournamentID string) (bool, error) {
+	//jwt token
+	return false
+}

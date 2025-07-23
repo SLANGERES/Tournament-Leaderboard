@@ -11,11 +11,11 @@ import (
 	"github.com/SLANGERES/Tournament-Lederboard/internal/common/jwt"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/common/util"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/user/models"
-	"github.com/SLANGERES/Tournament-Lederboard/internal/user/repository"
+	"github.com/SLANGERES/Tournament-Lederboard/internal/user/service"
 	"github.com/go-playground/validator/v10"
 )
 
-func SignInUser(db *repository.UserStorage) http.HandlerFunc {
+func SignInUser(servie service.UserService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userData models.CreateUser
 		if err := json.NewDecoder(r.Body).Decode(&userData); err != nil {
@@ -30,7 +30,7 @@ func SignInUser(db *repository.UserStorage) http.HandlerFunc {
 			return
 		}
 
-		_, err := db.CreateUser(userData.UserName, userData.Email, userData.Password)
+		_, err := servie.Signup(userData.UserName, userData.Email, userData.Password)
 		if err != nil {
 			util.HttpError(w, http.StatusInternalServerError, fmt.Errorf("failed to create user"))
 			return
@@ -40,7 +40,7 @@ func SignInUser(db *repository.UserStorage) http.HandlerFunc {
 	}
 }
 
-func LogInUser(db *repository.UserStorage, jwt *jwt.JwtMaker) http.HandlerFunc {
+func LogInUser(servie service.UserService, jwt *jwt.JwtMaker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userLoginData models.LoginUser
 
@@ -53,8 +53,7 @@ func LogInUser(db *repository.UserStorage, jwt *jwt.JwtMaker) http.HandlerFunc {
 			util.HttpError(w, http.StatusBadRequest, fmt.Errorf("validation error"))
 			return
 		}
-
-		id, err := db.LoginUser(userLoginData.UserName, userLoginData.Password)
+		id, err := servie.Login(userLoginData.UserName, userLoginData.Password)
 		if err != nil {
 			util.HttpError(w, http.StatusUnauthorized, fmt.Errorf("invalid username or password"))
 			return

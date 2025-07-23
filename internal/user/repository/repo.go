@@ -9,11 +9,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserStorage struct {
+type SQLiteUserStorage struct {
 	Db *sql.DB
 }
 
-func ConfigUserStorage(path string) (*UserStorage, error) {
+func ConfigUserStorage(path string) (*SQLiteUserStorage, error) {
 	db, err := sql.Open("sqlite3", path)
 
 	if err != nil {
@@ -31,12 +31,12 @@ func ConfigUserStorage(path string) (*UserStorage, error) {
 		log.Println("unable tp create table in db")
 		return nil, err
 	}
-	return &UserStorage{
+	return &SQLiteUserStorage{
 		Db: db,
 	}, nil
 }
 
-func (userStore *UserStorage) CreateUser(username string, email string, password string) (int64, error) {
+func (userStore *SQLiteUserStorage) CreateUser(username string, email string, password string) (int64, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return 0, err
@@ -56,7 +56,7 @@ func (userStore *UserStorage) CreateUser(username string, email string, password
 	return result.LastInsertId()
 }
 
-func (userStore *UserStorage) LoginUser(username string, password string) (int64, error) {
+func (userStore *SQLiteUserStorage) LoginUser(username string, password string) (int64, error) {
 	stmt, err := userStore.Db.Prepare(`SELECT id,password FROM users WHERE username=?`)
 	if err != nil {
 		return 0, err

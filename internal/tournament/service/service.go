@@ -7,6 +7,7 @@ type TournamentStorage interface {
 	// Tournament
 	CreateTournament(creatorID, name, description string) (string, error) // return UUID or string ID
 	GetAllTournaments() ([]models.Tournament, error)
+	GetTournamentById(id string) (models.Tournament, error)
 
 	// Problems
 	AddProblem(tournamentID string, problem models.Problem) (bool, error)
