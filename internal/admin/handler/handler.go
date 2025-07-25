@@ -8,13 +8,13 @@ import (
 	"time"
 
 	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/models"
-	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/repository"
+	"github.com/SLANGERES/Tournament-Lederboard/internal/admin/service"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/common/jwt"
 	"github.com/SLANGERES/Tournament-Lederboard/internal/common/util"
 	"github.com/go-playground/validator/v10"
 )
 
-func Signup(storage *repository.DbConnection) http.HandlerFunc {
+func Signup(storage service.AdminService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var newAdmin models.CreateAdmin
 
@@ -29,7 +29,7 @@ func Signup(storage *repository.DbConnection) http.HandlerFunc {
 			return
 		}
 
-		if _, err := storage.CreateAdmin(newAdmin.Email, newAdmin.UserName, newAdmin.Password); err != nil {
+		if _, err := storage.SignupAdmin(newAdmin.Email, newAdmin.UserName, newAdmin.Password); err != nil {
 			util.HttpError(w, http.StatusInternalServerError, fmt.Errorf("failed to create admin: %v", err))
 			return
 		}
@@ -38,7 +38,7 @@ func Signup(storage *repository.DbConnection) http.HandlerFunc {
 	}
 }
 
-func Login(Storage *repository.DbConnection, jwt *jwt.JwtMaker) http.HandlerFunc {
+func Login(Storage service.AdminService, jwt *jwt.JwtMaker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var adminLogin models.LogInAdmin
 		err := json.NewDecoder(r.Body).Decode(&adminLogin)

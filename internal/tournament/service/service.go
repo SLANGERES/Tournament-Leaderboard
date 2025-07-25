@@ -18,5 +18,5 @@ type TournamentStorage interface {
 
 	// Participants
 	AddParticipant(tournamentID, userID string) (bool, error)
-	GetAllParticipants(tournamentID string) ([]models.GetProblemResponse, error)
+	GetAllParticipants(tournamentID string) ([]models.GetTournamentParticipantResponse, error)
 }

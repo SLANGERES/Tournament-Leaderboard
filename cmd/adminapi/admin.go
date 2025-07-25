@@ -25,11 +25,11 @@ func main() {
 	router := http.NewServeMux()
 
 	db, err := repository.ConfigAdminDB(cnf.AdminDB)
-	
+
 	if err != nil {
 		slog.Info("Unable to connect to the Admin DB" + err.Error())
 	}
-
+	serviceDB := service.NewUserService(db)
 	jwtMaker := jwt.NewJwtMaker(cnf.JwtKey)
 
 	//!Prometheus Server Metrices
@@ -39,8 +39,8 @@ func main() {
 	}()
 
 	//! Routers Endpoints
-	router.HandleFunc("POST /v1/admin/signup", handler.Signup(db))
-	router.HandleFunc("POST /v1/admin/login", handler.Login(db, jwtMaker))
+	router.HandleFunc("POST /v1/admin/signup", handler.Signup(*serviceDB))
+	router.HandleFunc("POST /v1/admin/login", handler.Login(*serviceDB, jwtMaker))
 
 	slog.Info("Admin Server started at" + cnf.HttpServer.AdminAddress)
 	err = http.ListenAndServe(
