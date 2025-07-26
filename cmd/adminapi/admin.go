@@ -39,8 +39,8 @@ func main() {
 	}()
 
 	//! Routers Endpoints
-	router.HandleFunc("POST /v1/admin/signup", handler.Signup(*serviceDB))
-	router.HandleFunc("POST /v1/admin/login", handler.Login(*serviceDB, jwtMaker))
+	router.HandleFunc("POST /v1/admins/signup", handler.Signup(*serviceDB))
+	router.HandleFunc("POST /v1/admins/login", handler.Login(*serviceDB, jwtMaker))
 
 	slog.Info("Admin Server started at" + cnf.HttpServer.AdminAddress)
 	err = http.ListenAndServe(

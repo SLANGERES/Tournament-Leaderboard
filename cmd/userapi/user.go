@@ -33,8 +33,8 @@ func main() {
 		http.ListenAndServe(":9092", nil) // Different port for Prometheus scraping
 	}()
 	//! Routers Endpoints
-	router.HandleFunc("POST /v1/user/signup", handler.SignInUser(*service))
-	router.HandleFunc("POST /v1/user/login", handler.LogInUser(*service, jwtMaker))
+	router.HandleFunc("POST /v1/users/signup", handler.SignInUser(*service))
+	router.HandleFunc("POST /v1/users/login", handler.LogInUser(*service, jwtMaker))
 
 	slog.Info("Server started at " + cnf.HttpServer.UserAddress)
 	err = http.ListenAndServe(

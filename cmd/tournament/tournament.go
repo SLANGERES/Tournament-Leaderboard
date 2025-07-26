@@ -27,8 +27,18 @@ func main() {
 	router := http.NewServeMux()
 
 	// Corrected endpoint path (typo)
-	router.HandleFunc("POST /v1/tournament/", handler.CreateTournament(*tournamentService))
-	router.HandleFunc("GET /v1/tournament/ongoing", handler.GetOngoingTournament(*tournamentService))
+	router.HandleFunc("POST /v1/tournaments", handler.CreateTournament(*tournamentService))
+	router.HandleFunc("GET /v1/tournaments/ongoing", handler.GetOngoingTournament(*tournamentService))
+	router.HandleFunc("GET /v1/tournaments/{id}", handler.GetTournamentByID(*tournamentService))
+
+	router.HandleFunc("GET /v1/tournaments/addproblem/{id}", handler.AddProblemInTournament(*tournamentService))
+	router.HandleFunc("GET /v1/tournaments/ongoing/{id}", handler.GetProblem(*tournamentService))
+
+	router.HandleFunc("POST /v1/tournaments/ongoing", handler.AddNewTestCase(*tournamentService))
+	router.HandleFunc("GET /v1/tournaments/problem/testcase/{id}", handler.GetAllParticipant(*tournamentService))
+	// ! participant endpoint
+	router.HandleFunc("POST /v1/tournaments/ongoing", handler.AddParticipant(*tournamentService))
+	router.HandleFunc("GET /v1/tournaments/participants/{id}", handler.GetAllParticipant(*tournamentService))
 
 	slog.Info("Server starting at " + cnf.HttpServer.TournamentAddress)
 	err = http.ListenAndServe(cnf.HttpServer.TournamentAddress, router)

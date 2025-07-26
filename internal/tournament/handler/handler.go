@@ -43,7 +43,7 @@ func CreateTournament(tournamentService service.TournamentService) http.HandlerF
 	}
 }
 
-func GetOngoingTournament(tournamentService *service.TournamentService) http.HandlerFunc {
+func GetOngoingTournament(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tournaments, err := tournamentService.GetAllTournaments()
 		if err != nil {
@@ -126,14 +126,13 @@ func AddParticipant(tournamentService service.TournamentService) http.HandlerFun
 			util.HttpError(w, http.StatusUnauthorized, fmt.Errorf("unable to get JWT claims"))
 			return
 		}
-
 		tournamentID := r.PathValue("id")
 		if tournamentID == "" {
 			util.HttpError(w, http.StatusBadRequest, fmt.Errorf("tournament ID is required"))
 			return
 		}
 
-		ok, err := tournamentService.AddParticipant(tournamentID, claim.Subject)
+		ok, err := tournamentService.AddParticipant(tournamentID, claim.Subject, claim.Username)
 		if err != nil || !ok {
 			util.HttpError(w, http.StatusInternalServerError, fmt.Errorf("could not add participant: %v", err))
 			return

@@ -1,17 +1,19 @@
 package service
 
-import "github.com/SLANGERES/Tournament-Lederboard/internal/tournament/models"
+import (
+	"github.com/SLANGERES/Tournament-Lederboard/internal/tournament/models"
+	"github.com/SLANGERES/Tournament-Lederboard/internal/tournament/repository"
+)
 
 type TournamentService struct {
-	store TournamentStorage
+	store *repository.TournamentStorage
 }
 
-// Constructor
-func NewTournamentService(store TournamentStorage) *TournamentService {
+func NewTournamentService(store *repository.TournamentStorage) *TournamentService {
 	return &TournamentService{store: store}
 }
 
-// Methods
+// Service Methods
 
 func (s *TournamentService) CreateTournament(creatorID, name, description string) (string, error) {
 	return s.store.CreateTournament(creatorID, name, description)
@@ -21,7 +23,7 @@ func (s *TournamentService) GetAllTournaments() ([]models.Tournament, error) {
 	return s.store.GetAllTournaments()
 }
 
-func (s *TournamentService) GetTournamentById(id string) (models.Tournament, error) {
+func (s *TournamentService) GetTournamentById(id string) (*models.Tournament, error) {
 	return s.store.GetTournamentById(id)
 }
 
@@ -37,8 +39,8 @@ func (s *TournamentService) AddTestCase(problemID string, testCase models.TestCa
 	return s.store.AddTestCase(problemID, testCase)
 }
 
-func (s *TournamentService) AddParticipant(tournamentID, userID string) (bool, error) {
-	return s.store.AddParticipant(tournamentID, userID)
+func (s *TournamentService) AddParticipant(tournamentID, userID, userName string) (bool, error) {
+	return s.store.AddParticipant(tournamentID, userID, userName)
 }
 
 func (s *TournamentService) GetAllParticipants(tournamentID string) ([]models.GetTournamentParticipantResponse, error) {
