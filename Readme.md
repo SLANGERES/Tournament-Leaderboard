@@ -39,7 +39,7 @@ The project follows a clean architecture pattern, with distinct layers for handl
 #### Prerequisites
 
 -   Go 1.22 or higher
--   Docker (for database setup)
+-   Docker (for Prometheus)
 
 #### Setup
 
@@ -74,7 +74,7 @@ The project follows a clean architecture pattern, with distinct layers for handl
     go run cmd/api/main.go
     ```
 
-The API will be running on the address specified in your configuration (e.g., `http://localhost:8080`).
+The API will be running on the address specified in your configuration (e.g., `http://localhost:7070`).
 
 ---
 
@@ -82,7 +82,7 @@ The API will be running on the address specified in your configuration (e.g., `h
 
 The API endpoints are documented using **Swagger**. Once the server is running, you can access the interactive documentation at:
 
--   `http://localhost:8080/swagger/index.html`
+-   `http://localhost:7070/swagger/index.html`
 
 This will provide a complete list of all available endpoints, their parameters, and expected responses.
 
