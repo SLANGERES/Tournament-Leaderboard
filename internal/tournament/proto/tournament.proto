@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package tournament;
+
+service TournamentService {
+  rpc CreateTournament(CreateTournamentRequest) returns (CreateTournamentResponse);
+  rpc JoinTournament(JoinTournamentRequest) returns (JoinTournamentResponse);
+}
+
+message CreateTournamentRequest {
+  string token = 1; // JWT for auth
+  string name = 2;
+  string description = 3;
+}
+
+message CreateTournamentResponse {
+  string status = 1;
+  string tournament_id = 2;
+}
+
+message JoinTournamentRequest {
+  string token = 1; // JWT for auth
+  string tournament_id = 2;
+}
+
+message JoinTournamentResponse {
+  string status = 1;
+}

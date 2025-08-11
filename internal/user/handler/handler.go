@@ -15,6 +15,17 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// Signup godoc
+// @Summary User signup
+// @Description Register a new User account
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param user body models.CreateUser true "User Signup Data"
+// @Success 201 {string} string "User created successfully"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /user/signup [post]
 func SignInUser(servie service.UserService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userData models.CreateUser
@@ -40,6 +51,17 @@ func SignInUser(servie service.UserService) http.HandlerFunc {
 	}
 }
 
+// Login godoc
+// @Summary User login
+// @Description Authenticate an user and return JWT in cookie
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param credentials body models.LoginUser true "User Login Data"
+// @Success 200 {string} string "Login successful"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /user/login [post]
 func LogInUser(servie service.UserService, jwt *jwt.JwtMaker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var userLoginData models.LoginUser

@@ -14,10 +14,27 @@ import (
 
 var validate = validator.New()
 
+// CreateTournament godoc
+// @Summary Create a new tournament
+// @Description Admin-only endpoint to create a new tournament
+// @Tags tournaments
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer JWT"
+// @Param tournament body models.Tournament true "Tournament details"
+// @Success 201 {object} models.Tournament
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 401 {object} util.ErrorResponse
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments [post]
 func CreateTournament(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		claim, ok := middleware.ClaimsJWT(r.Context())
 		if !ok {
+			util.HttpError(w, http.StatusUnauthorized, fmt.Errorf("unable to get JWT claims"))
+			return
+		}
+		if claim.Role != "admin" {
 			util.HttpError(w, http.StatusUnauthorized, fmt.Errorf("unable to get JWT claims"))
 			return
 		}
@@ -43,6 +60,14 @@ func CreateTournament(tournamentService service.TournamentService) http.HandlerF
 	}
 }
 
+// GetOngoingTournament godoc
+// @Summary Get all ongoing tournaments
+// @Description Returns a list of all ongoing tournaments
+// @Tags tournaments
+// @Produce json
+// @Success 200 {array} models.Tournament
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments/ongoing [get]
 func GetOngoingTournament(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tournaments, err := tournamentService.GetAllTournaments()
@@ -54,6 +79,16 @@ func GetOngoingTournament(tournamentService service.TournamentService) http.Hand
 	}
 }
 
+// GetTournamentByID godoc
+// @Summary Get tournament by ID
+// @Description Returns details of a tournament by its ID
+// @Tags tournaments
+// @Produce json
+// @Param id path string true "Tournament ID"
+// @Success 200 {object} models.Tournament
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 404 {object} util.ErrorResponse
+// @Router /tournaments/{id} [get]
 func GetTournamentByID(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("tournamentID")
@@ -72,6 +107,20 @@ func GetTournamentByID(tournamentService service.TournamentService) http.Handler
 	}
 }
 
+// AddProblemInTournament godoc
+// @Summary Add a problem to a tournament
+// @Description Admin-only endpoint to add a coding problem to a tournament
+// @Tags tournaments
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer JWT"
+// @Param id path string true "Tournament ID"
+// @Param problem body models.Problem true "Problem details"
+// @Success 200 {string} string "Problem added successfully"
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 401 {object} util.ErrorResponse
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments/addproblem/{id} [post]
 func AddProblemInTournament(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -101,6 +150,17 @@ func AddProblemInTournament(tournamentService service.TournamentService) http.Ha
 	}
 }
 
+// GetProblem godoc
+// @Summary Get problems for a tournament
+// @Description Returns a list of problems for a given tournament
+// @Tags tournaments
+// @Produce json
+// @Param id path string true "Tournament ID"
+// @Success 200 {array} models.GetProblemResponse
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments/ongoing/{id}/problem [get]
+
 func GetProblem(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -119,6 +179,18 @@ func GetProblem(tournamentService service.TournamentService) http.HandlerFunc {
 	}
 }
 
+// AddParticipant godoc
+// @Summary Add participant to an ongoing tournament
+// @Description Allows a logged-in user to join an ongoing tournament
+// @Tags tournaments
+// @Produce json
+// @Param Authorization header string true "Bearer JWT"
+// @Param id path string true "Tournament ID"
+// @Success 200 {string} string "Participant added successfully"
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 401 {object} util.ErrorResponse
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments/ongoing/addparticipant/{id} [post]
 func AddParticipant(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		claim, ok := middleware.ClaimsJWT(r.Context())
@@ -142,6 +214,16 @@ func AddParticipant(tournamentService service.TournamentService) http.HandlerFun
 	}
 }
 
+// GetAllParticipant godoc
+// @Summary Get all participants for a tournament
+// @Description Returns a list of participants in a given tournament
+// @Tags tournaments
+// @Produce json
+// @Param id path string true "Tournament ID"
+// @Success 200 {array} models.GetTournamentParticipantResponse
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments/{id}/participants [get]
 func GetAllParticipant(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
@@ -160,6 +242,20 @@ func GetAllParticipant(tournamentService service.TournamentService) http.Handler
 	}
 }
 
+// AddNewTestCase godoc
+// @Summary Add a new test case to a problem
+// @Description Admin-only endpoint to add a test case to a problem
+// @Tags tournaments
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Bearer JWT"
+// @Param id path string true "Problem ID"
+// @Param testcase body models.TestCase true "Test case details"
+// @Success 200 {string} string "Test case added successfully"
+// @Failure 400 {object} util.ErrorResponse
+// @Failure 401 {object} util.ErrorResponse
+// @Failure 500 {object} util.ErrorResponse
+// @Router /tournaments/addtestcase/{id} [post]
 func AddNewTestCase(tournamentService service.TournamentService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")

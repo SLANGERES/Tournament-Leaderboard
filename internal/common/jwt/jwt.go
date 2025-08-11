@@ -17,6 +17,7 @@ func NewJwtMaker(secretKey string) *JwtMaker {
 
 type TournamentClaims struct {
 	Username string `json:"user_name"`
+	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -25,6 +26,7 @@ func (maker *JwtMaker) GenerateToken(id string, username string, role string) (s
 	duration := 30 * time.Minute
 	claims := TournamentClaims{
 		Username: username,
+		Role:     role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject:   id,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
@@ -50,4 +52,3 @@ func (maker *JwtMaker) VerifyToken(tokenString string) (*TournamentClaims, error
 
 	return claims, nil
 }
-

@@ -15,6 +15,12 @@ type errorResponse struct {
 	Error   string `json:"error"`
 }
 
+// ErrorResponse represents an error response for API documentation
+type ErrorResponse struct {
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
+
 func HttpResponse(w http.ResponseWriter, statusCode int, message interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)

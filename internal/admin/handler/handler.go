@@ -14,6 +14,17 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// Signup godoc
+// @Summary Admin signup
+// @Description Register a new admin account
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param admin body models.CreateAdmin true "Admin Signup Data"
+// @Success 201 {string} string "Admin created successfully"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /admin/signup [post]
 func Signup(storage service.AdminService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var newAdmin models.CreateAdmin
@@ -38,6 +49,17 @@ func Signup(storage service.AdminService) http.HandlerFunc {
 	}
 }
 
+// Login godoc
+// @Summary Admin login
+// @Description Authenticate an admin and return JWT in cookie
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param credentials body models.LogInAdmin true "Admin Login Data"
+// @Success 200 {string} string "Login successful"
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /admin/login [post]
 func Login(Storage service.AdminService, jwt *jwt.JwtMaker) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var adminLogin models.LogInAdmin
